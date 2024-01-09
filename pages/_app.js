@@ -2,6 +2,7 @@ import '@/styles/globals.css';
 
 import { ThemeProvider } from '@material-tailwind/react';
 import { SessionProvider } from 'next-auth/react';
+import NextNProgress from 'nextjs-progressbar';
 
 export default function App({
   Component,
@@ -10,6 +11,7 @@ export default function App({
   return (
     <SessionProvider session={session}>
       <ThemeProvider>
+        <NextNProgress color="#16a34a" />
         <Component {...pageProps} />
       </ThemeProvider>
     </SessionProvider>
