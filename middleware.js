@@ -1,7 +1,12 @@
 import { getToken } from 'next-auth/jwt';
 import { NextResponse } from 'next/server';
 
-const protectedRoutes = ['/', '/location'];
+const protectedRoutes = [
+  '/',
+  '/location',
+  '/location/maps',
+  '/location/detail',
+];
 export default async function middleware(req) {
   if (protectedRoutes.includes(req.nextUrl.pathname)) {
     const token = await getToken({ req, secret: 'telemetrikey' });
