@@ -1,4 +1,5 @@
 import Layout from '@/components/Layout';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import {
   Button,
   Card,
@@ -11,14 +12,15 @@ import {
   Typography,
 } from '@material-tailwind/react';
 import axios from 'axios';
+import { getServerSession } from 'next-auth';
 import { useRouter } from 'next/router';
 import { HiExternalLink } from 'react-icons/hi';
 import { HiMagnifyingGlass, HiPencil, HiPlus, HiTrash } from 'react-icons/hi2';
+const TABLE_HEAD = ['No', 'Name', 'Title', 'Status', 'Action'];
 
-const TABLE_HEAD = ['No', 'Name', 'Status', 'Action'];
-
-export default function LocationDetail({ maps }) {
+export default function LocationDetail({ stations }) {
   const router = useRouter();
+
   return (
     <Layout title="Location Detail">
       <Card className="h-full w-full">
@@ -68,7 +70,7 @@ export default function LocationDetail({ maps }) {
               </tr>
             </thead>
             <tbody>
-              {maps.map((map, index) => {
+              {stations.data.map((map, index) => {
                 const classes = 'p-4 border-b border-blue-gray-50';
 
                 return (
@@ -97,6 +99,15 @@ export default function LocationDetail({ maps }) {
                         color="blue-gray"
                         className="font-normal"
                       >
+                        {map.title}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
                         {map.status}
                       </Typography>
                     </td>
@@ -105,7 +116,7 @@ export default function LocationDetail({ maps }) {
                         <IconButton
                           variant="text"
                           onClick={() =>
-                            router.push(`/location/detail/${map.id}`)
+                            router.push(`/location/detail/${map.name}`)
                           }
                         >
                           <HiExternalLink className="h-4 w-4" />
@@ -146,13 +157,22 @@ export default function LocationDetail({ maps }) {
   );
 }
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ req, res }) {
+  const session = await getServerSession(req, res, authOptions);
+
   try {
-    const { data } = await axios.get(`http://${req.headers.host}/api/maps`);
+    const { data } = await axios.get(
+      'http://103.112.163.137:3001/api/location/maps',
+      {
+        headers: {
+          token: session.user.token,
+        },
+      }
+    );
 
     return {
       props: {
-        maps: data,
+        stations: data,
       },
     };
   } catch (error) {

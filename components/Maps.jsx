@@ -1,6 +1,8 @@
+import { Spinner } from '@material-tailwind/react';
 import axios from 'axios';
 import { Icon } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
@@ -13,20 +15,37 @@ const icon = new Icon({
 });
 
 export default function Maps() {
-  const [data, setData] = useState([]);
-
-  async function getDataMaps() {
-    try {
-      const { data } = await axios.get('/api/maps');
-      setData(data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  const [stations, setStations] = useState([]);
+  const session = useSession();
 
   useEffect(() => {
     getDataMaps();
-  }, []);
+
+    async function getDataMaps() {
+      try {
+        const { data } = await axios.get(
+          'http://103.112.163.137:3001/api/location/maps',
+          {
+            headers: {
+              token: session.data.user.token,
+            },
+          }
+        );
+
+        setStations(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [session.data.user.token]);
+
+  if (stations.length == 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <MapContainer center={position} zoom={7}>
@@ -34,13 +53,20 @@ export default function Maps() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {data.map((marker, index) => {
+      {stations.data.map((station, index) => {
         return (
-          <Marker position={marker.geocode} icon={icon} key={index}>
+          <Marker
+            position={[station.lat, station.long]}
+            icon={icon}
+            key={index}
+          >
             <Popup>
-              <p>Name: {marker.name}</p>
-              <p>Status: {marker.status}</p>
-              <Link href={`/location/detail/${marker.id}`}>Lihat detail</Link>
+              <p>Name: {station.name}</p>
+              <p>Title: {station.title}</p>
+              <p>Status: {station.status}</p>
+              <Link href={`/location/detail/${station.name}`}>
+                Lihat detail
+              </Link>
             </Popup>
           </Marker>
         );

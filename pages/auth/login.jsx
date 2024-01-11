@@ -8,16 +8,16 @@ import { useState } from 'react';
 
 export default function Login() {
   const [type, setType] = useState('password');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const [disabled, setDisabled] = useState(true);
 
   function handleLogin() {
-    if (username == '' || password == '') return;
+    if (email == '' || password == '') return;
 
     signIn('credentials', {
-      username,
+      email,
       password,
       callbackUrl: '/',
     });
@@ -48,11 +48,11 @@ export default function Login() {
 
             <input
               type="text"
-              placeholder="Username"
+              placeholder="Email"
               className="flex h-[52px] w-full rounded-md bg-gray-200 px-6 text-base text-gray-900 outline-none placeholder:text-[14px] placeholder:font-semibold placeholder:text-gray-600 focus:border focus:border-green-400 focus:ring-4 focus:ring-green-400/20"
-              name="username"
+              name="email"
               onKeyUp={(e) => {
-                setUsername(e.target.value);
+                setEmail(e.target.value);
                 if (e.target.value == '' || password == '') {
                   setDisabled(true);
                 } else {
@@ -70,7 +70,7 @@ export default function Login() {
                 name="password"
                 onKeyUp={(e) => {
                   setPassword(e.target.value);
-                  if (e.target.value == '' || username == '') {
+                  if (e.target.value == '' || email == '') {
                     setDisabled(true);
                   } else {
                     setDisabled(false);

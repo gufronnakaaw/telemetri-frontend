@@ -1,7 +1,8 @@
+import axios from 'axios';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-export default NextAuth({
+export const authOptions = {
   session: {
     strategy: 'jwt',
     maxAge: 1 * 60 * 60, // 1 hour
@@ -13,15 +14,17 @@ export default NextAuth({
   providers: [
     CredentialsProvider({
       async authorize(credentials, req) {
-        const { username, password } = credentials;
+        try {
+          const { email, password } = credentials;
 
-        if (username == 'admin' && password == 'admin') {
-          return {
-            email: 'admin@mail.com',
-            fullname: 'Admin User',
-          };
-        } else {
-          return null;
+          const { data } = await axios.post(
+            'http://103.112.163.137:3001/api/auth/login',
+            { email, password }
+          );
+
+          return { ...data.data };
+        } catch (error) {
+          return error;
         }
       },
     }),
@@ -36,4 +39,6 @@ export default NextAuth({
       return session;
     },
   },
-});
+};
+
+export default NextAuth(authOptions);
