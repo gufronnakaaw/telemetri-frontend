@@ -19,7 +19,9 @@ export default function Maps() {
   const session = useSession();
 
   useEffect(() => {
-    getDataMaps();
+    if (session.status == 'authenticated') {
+      getDataMaps();
+    }
 
     async function getDataMaps() {
       try {
@@ -37,12 +39,12 @@ export default function Maps() {
         console.log(error);
       }
     }
-  }, [session.data.user.token]);
+  }, [session]);
 
   if (stations.length == 0) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <Spinner />
+        <Spinner color="green" className="h-10 w-10" />
       </div>
     );
   }

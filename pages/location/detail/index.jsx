@@ -1,56 +1,94 @@
 import Layout from '@/components/Layout';
+import ModalCreate from '@/components/ModalCreate';
+import Loading from '@/components/Spinner';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import {
   Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   IconButton,
-  Input,
   Tooltip,
   Typography,
 } from '@material-tailwind/react';
 import axios from 'axios';
 import { getServerSession } from 'next-auth';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { HiExternalLink } from 'react-icons/hi';
-import { HiMagnifyingGlass, HiPencil, HiPlus, HiTrash } from 'react-icons/hi2';
-const TABLE_HEAD = ['No', 'Name', 'Title', 'Status', 'Action'];
+import { HiPencil, HiPlus, HiTrash } from 'react-icons/hi2';
+import useSWR from 'swr';
 
-export default function LocationDetail({ stations }) {
+const TABLE_HEAD = ['No', 'Name', 'Title', 'Status', 'Action'];
+export default function LocationDetail({ stations, token }) {
+  const { data, isLoading, mutate } = useSWR(
+    '/api/location/maps',
+    async (url) => {
+      try {
+        const { data } = await axios.get(`http://103.112.163.137:3001${url}`, {
+          headers: {
+            token,
+          },
+        });
+
+        return data;
+      } catch (error) {
+        return error;
+      }
+    },
+    {
+      fallback: stations,
+    }
+  );
+  const [openCreate, setOpenCreate] = useState(false);
   const router = useRouter();
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  async function handleDelete(name) {
+    if (confirm('are you sure?')) {
+      try {
+        await axios.delete('http://103.112.163.137:3001/api/location', {
+          headers: {
+            token,
+          },
+          data: { name },
+        });
+        mutate();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
 
   return (
     <Layout title="Location Detail">
       <Card className="h-full w-full">
         <CardHeader floated={false} shadow={false} className="rounded-none">
-          <div className="mb-8 flex items-center justify-between gap-8">
+          <div className="mb-4 flex items-center justify-between gap-8">
             <div>
               <Typography variant="h5" color="blue-gray">
                 Locations list
               </Typography>
               <Typography color="gray" className="mt-1 font-normal">
-                See information about all Locations
+                See information about all locations
               </Typography>
             </div>
             <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-              <Button className="flex items-center gap-3" size="sm">
+              <Button
+                className="flex items-center gap-3"
+                size="sm"
+                onClick={() => setOpenCreate(!openCreate)}
+              >
                 <HiPlus strokeWidth={2} className="h-4 w-4" /> Add location
               </Button>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <div className="w-full md:w-72">
-              <Input
-                label="Search"
-                icon={<HiMagnifyingGlass className="h-5 w-5" />}
-              />
-            </div>
-          </div>
         </CardHeader>
         <CardBody className="px-0">
-          <table className="mt-4 w-full min-w-max table-auto text-center">
+          <table className="w-full min-w-max table-auto text-center">
             <thead>
               <tr>
                 {TABLE_HEAD.map((head, index) => (
@@ -70,7 +108,7 @@ export default function LocationDetail({ stations }) {
               </tr>
             </thead>
             <tbody>
-              {stations.data.map((map, index) => {
+              {data.data.map((map, index) => {
                 const classes = 'p-4 border-b border-blue-gray-50';
 
                 return (
@@ -128,7 +166,10 @@ export default function LocationDetail({ stations }) {
                         </IconButton>
                       </Tooltip>
                       <Tooltip content="Delete Location">
-                        <IconButton variant="text">
+                        <IconButton
+                          variant="text"
+                          onClick={() => handleDelete(map.name)}
+                        >
                           <HiTrash className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
@@ -139,20 +180,8 @@ export default function LocationDetail({ stations }) {
             </tbody>
           </table>
         </CardBody>
-        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-          <Typography variant="small" color="blue-gray" className="font-normal">
-            Page 1 of 2
-          </Typography>
-          <div className="flex gap-2">
-            <Button variant="outlined" size="sm">
-              Previous
-            </Button>
-            <Button variant="outlined" size="sm">
-              Next
-            </Button>
-          </div>
-        </CardFooter>
       </Card>
+      <ModalCreate open={openCreate} setOpen={setOpenCreate} mutate={mutate} />
     </Layout>
   );
 }
@@ -173,6 +202,7 @@ export async function getServerSideProps({ req, res }) {
     return {
       props: {
         stations: data,
+        token: session.user.token,
       },
     };
   } catch (error) {

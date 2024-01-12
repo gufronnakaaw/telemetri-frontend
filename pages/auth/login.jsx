@@ -51,7 +51,7 @@ export default function Login() {
               placeholder="Email"
               className="flex h-[52px] w-full rounded-md bg-gray-200 px-6 text-base text-gray-900 outline-none placeholder:text-[14px] placeholder:font-semibold placeholder:text-gray-600 focus:border focus:border-green-400 focus:ring-4 focus:ring-green-400/20"
               name="email"
-              onKeyUp={(e) => {
+              onChange={(e) => {
                 setEmail(e.target.value);
                 if (e.target.value == '' || password == '') {
                   setDisabled(true);
@@ -68,7 +68,7 @@ export default function Login() {
                 placeholder="Password"
                 className="flex h-[52px] w-full rounded-md bg-gray-200 px-6 text-base text-gray-900 outline-none placeholder:text-[14px] placeholder:font-semibold placeholder:text-gray-600 focus:border focus:border-green-400 focus:ring-4 focus:ring-green-400/20"
                 name="password"
-                onKeyUp={(e) => {
+                onChange={(e) => {
                   setPassword(e.target.value);
                   if (e.target.value == '' || email == '') {
                     setDisabled(true);

@@ -12,3 +12,7 @@ body {
 .leaflet-container {
   @apply h-full w-full rounded-md;
 }
+
+.active {
+  @apply bg-gray-300;
+}

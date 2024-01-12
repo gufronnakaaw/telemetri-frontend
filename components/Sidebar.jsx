@@ -23,11 +23,8 @@ import {
 
 export default function Sidebar() {
   const router = useRouter();
-  const [open, setOpen] = useState(0);
-
-  const handleOpen = (value) => {
-    setOpen(open === value ? 0 : value);
-  };
+  const path = router.pathname;
+  const [open, setOpen] = useState(path.startsWith('/location'));
 
   return (
     <>
@@ -39,25 +36,28 @@ export default function Sidebar() {
         </div>
         <List>
           <Accordion
-            open={open === 1}
+            open={open}
             icon={
               <HiChevronDown
                 strokeWidth={2.5}
                 className={`mx-auto h-4 w-4 transition-transform ${
-                  open === 1 ? 'rotate-180' : ''
+                  open ? 'rotate-180' : ''
                 }`}
               />
             }
           >
-            <ListItem onClick={() => router.push('/')}>
+            <ListItem
+              onClick={() => router.push('/')}
+              className={`${path == '/' ? 'active' : ''}`}
+            >
               <ListItemPrefix>
                 <HiMiniComputerDesktop className="h-5 w-5" />
               </ListItemPrefix>
               Dashboard
             </ListItem>
-            <ListItem className="p-0" selected={open === 1}>
+            <ListItem className="p-0" selected={open}>
               <AccordionHeader
-                onClick={() => handleOpen(1)}
+                onClick={() => setOpen(!open)}
                 className="border-b-0 p-3"
               >
                 <ListItemPrefix>
@@ -70,13 +70,24 @@ export default function Sidebar() {
             </ListItem>
             <AccordionBody className="py-1">
               <List className="p-0">
-                <ListItem onClick={() => router.push('/location/maps')}>
+                <ListItem
+                  onClick={() => router.push('/location/maps')}
+                  className={`${path == '/location/maps' ? 'active' : ''}`}
+                >
                   <ListItemPrefix className="ml-4">
                     <HiMap className="h-4 w-4" />
                   </ListItemPrefix>
                   Maps
                 </ListItem>
-                <ListItem onClick={() => router.push('/location/detail')}>
+                <ListItem
+                  onClick={() => router.push('/location/detail')}
+                  className={`${
+                    path == '/location/detail' ||
+                    path == '/location/detail/[name]'
+                      ? 'active'
+                      : ''
+                  }`}
+                >
                   <ListItemPrefix className="ml-4">
                     <HiMiniCpuChip className="h-4 w-4" />
                   </ListItemPrefix>
