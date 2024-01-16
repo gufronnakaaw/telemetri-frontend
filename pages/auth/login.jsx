@@ -1,25 +1,43 @@
-import { Button } from '@material-tailwind/react';
+import { Button, Spinner } from '@material-tailwind/react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
 
 import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
+import Toast from 'react-hot-toast';
 
 export default function Login() {
   const [type, setType] = useState('password');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const [disabled, setDisabled] = useState(true);
 
-  function handleLogin() {
+  async function handleLogin() {
     if (email == '' || password == '') return;
 
-    signIn('credentials', {
+    setDisabled(true);
+    setLoading(true);
+    const { ok } = await signIn('credentials', {
       email,
       password,
       callbackUrl: '/',
+      redirect: false,
+    });
+
+    setDisabled(false);
+    setLoading(false);
+
+    if (ok) {
+      return router.push('/');
+    }
+
+    Toast.error('email or password wrong', {
+      position: 'top-right',
     });
   }
 
@@ -94,12 +112,12 @@ export default function Login() {
             </div>
 
             <Button
-              className="bg-green-400"
+              className="bg-green-400 flex justify-center"
               size="lg"
               onClick={handleLogin}
               disabled={disabled}
             >
-              Login
+              {loading ? <Spinner /> : 'Login'}
             </Button>
 
             <p className="mt-4 text-sm">Copyright {new Date().getFullYear()}</p>
