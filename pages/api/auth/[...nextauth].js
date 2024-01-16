@@ -24,7 +24,7 @@ export const authOptions = {
 
           return { ...data.data };
         } catch (error) {
-          return error;
+          return false;
         }
       },
     }),
