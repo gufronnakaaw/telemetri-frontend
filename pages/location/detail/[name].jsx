@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import useSWR from 'swr';
 
 const TABLE_HEAD = [
+  'No',
   'Time',
   'AC Voltage',
   'AC Current',
@@ -53,7 +54,7 @@ export default function DetailLocation({ details, token, name }) {
 
   return (
     <Layout title="Detail Location">
-      <Card className="h-full w-full rounded-lg p-5 overflow-scroll overflow-y-hidden">
+      <Card className="h-full w-full rounded-lg p-5 overflow-scroll">
         <div>
           <Button onClick={() => router.push('/location/detail')}>Back</Button>
         </div>
@@ -64,12 +65,16 @@ export default function DetailLocation({ details, token, name }) {
               {TABLE_HEAD.map((head, index) => (
                 <th
                   key={index}
-                  className="cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50 "
+                  className={`cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50 ${
+                    head == 'No' ? 'bg-gray-300' : ''
+                  }`}
                 >
                   <Typography
                     variant="small"
                     color="blue-gray"
-                    className="flex items-center justify-center gap-2 font-normal leading-none opacity-70 "
+                    className={`flex items-center justify-center gap-2 leading-none opacity-70 ${
+                      head == 'No' ? 'font-bold' : 'font-normal'
+                    }`}
                   >
                     {head}
                   </Typography>
@@ -83,11 +88,20 @@ export default function DetailLocation({ details, token, name }) {
                 <td colSpan={14}>Data Kosong</td>
               </tr>
             ) : (
-              data.data.map((detail) => {
+              data.data.map((detail, index) => {
                 const classes = 'p-4 border-b border-blue-gray-50';
 
                 return (
                   <tr key={detail.id}>
+                    <td className={`${classes} bg-gray-300`}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {data.data.length - index}
+                      </Typography>
+                    </td>
                     <td className={classes}>
                       <Typography
                         variant="small"
