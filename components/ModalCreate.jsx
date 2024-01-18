@@ -96,7 +96,7 @@ export default function ModalCreate({ open, setOpen, mutate }) {
           >
             <span>Cancel</span>
           </Button>
-          <Button variant="gradient" color="green" onClick={handleCreate}>
+          <Button variant="gradient" color="black" onClick={handleCreate}>
             <span>Create</span>
           </Button>
         </DialogFooter>

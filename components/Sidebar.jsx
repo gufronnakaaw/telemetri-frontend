@@ -14,11 +14,10 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import {
   HiChevronDown,
-  HiMap,
   HiMapPin,
   HiMiniArrowRightOnRectangle,
   HiMiniComputerDesktop,
-  HiMiniCpuChip,
+  HiOutlineInformationCircle,
 } from 'react-icons/hi2';
 
 export default function Sidebar() {
@@ -70,7 +69,7 @@ export default function Sidebar() {
             </ListItem>
             <AccordionBody className="py-1">
               <List className="p-0">
-                <ListItem
+                {/* <ListItem
                   onClick={() => router.push('/location/maps')}
                   className={`${path == '/location/maps' ? 'active' : ''}`}
                 >
@@ -78,7 +77,7 @@ export default function Sidebar() {
                     <HiMap className="h-4 w-4" />
                   </ListItemPrefix>
                   Maps
-                </ListItem>
+                </ListItem> */}
                 <ListItem
                   onClick={() => router.push('/location/detail')}
                   className={`${
@@ -89,7 +88,7 @@ export default function Sidebar() {
                   }`}
                 >
                   <ListItemPrefix className="ml-4">
-                    <HiMiniCpuChip className="h-4 w-4" />
+                    <HiOutlineInformationCircle className="h-5 w-5" />
                   </ListItemPrefix>
                   Detail
                 </ListItem>

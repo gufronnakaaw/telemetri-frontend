@@ -3,7 +3,6 @@ import ModalCreate from '@/components/ModalCreate';
 import Loading from '@/components/Spinner';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import {
-  Button,
   Card,
   CardBody,
   CardHeader,
@@ -77,13 +76,14 @@ export default function LocationDetail({ stations, token }) {
               </Typography>
             </div>
             <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-              <Button
-                className="flex items-center gap-3"
-                size="sm"
-                onClick={() => setOpenCreate(!openCreate)}
-              >
-                <HiPlus strokeWidth={2} className="h-4 w-4" /> Add location
-              </Button>
+              <Tooltip content="Add Location">
+                <IconButton
+                  variant="text"
+                  onClick={() => setOpenCreate(!openCreate)}
+                >
+                  <HiPlus strokeWidth={2} className="h-7 w-7" />
+                </IconButton>
+              </Tooltip>
             </div>
           </div>
         </CardHeader>

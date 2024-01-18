@@ -1,10 +1,17 @@
 import Layout from '@/components/Layout';
 import Loading from '@/components/Spinner';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { Button, Card, Typography } from '@material-tailwind/react';
+import {
+  Card,
+  IconButton,
+  Tooltip,
+  Typography,
+} from '@material-tailwind/react';
 import axios from 'axios';
 import { getServerSession } from 'next-auth';
 import { useRouter } from 'next/router';
+import Toast from 'react-hot-toast';
+import { HiArrowLeft } from 'react-icons/hi2';
 import useSWR from 'swr';
 
 const TABLE_HEAD = [
@@ -25,7 +32,7 @@ const TABLE_HEAD = [
   'Volume Air',
 ];
 export default function DetailLocation({ details, token, name }) {
-  const { data, isLoading } = useSWR(
+  const { data, isLoading, isValidating } = useSWR(
     `/api/location/detail/${name}`,
     async (url) => {
       try {
@@ -52,12 +59,27 @@ export default function DetailLocation({ details, token, name }) {
     return <Loading />;
   }
 
+  if (!isValidating) {
+    Toast.success('Successfully updated data', {
+      position: 'top-right',
+      duration: 3500,
+    });
+  }
+
   return (
-    <Layout title="Detail Location">
+    <Layout title={`Detail Location ${name}`}>
       <Card className="h-full w-full rounded-lg p-5 overflow-scroll">
-        <div>
-          <Button onClick={() => router.push('/location/detail')}>Back</Button>
+        <div className="mb-5">
+          <Tooltip content="Back">
+            <IconButton
+              variant="text"
+              onClick={() => router.push('/location/detail')}
+            >
+              <HiArrowLeft className="h-6 w-6" />
+            </IconButton>
+          </Tooltip>
         </div>
+        <Typography variant="h5">Station name : {name}</Typography>
 
         <table className="mt-4 w-full min-w-max table-auto text-center">
           <thead>
@@ -135,7 +157,7 @@ export default function DetailLocation({ details, token, name }) {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {detail.power}
+                        {parseFloat(detail.power) / 10}
                       </Typography>
                     </td>
                     <td className={classes}>
