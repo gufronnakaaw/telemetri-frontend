@@ -1,6 +1,7 @@
 import Layout from '@/components/Layout';
 import Loading from '@/components/Spinner';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
+import { convertDate, convertTime } from '@/utils/convert';
 import {
   Card,
   IconButton,
@@ -16,6 +17,7 @@ import useSWR from 'swr';
 
 const TABLE_HEAD = [
   'No',
+  'Date',
   'Time',
   'AC Voltage',
   'AC Current',
@@ -49,7 +51,7 @@ export default function DetailLocation({ details, token, name }) {
     },
     {
       fallback: details,
-      refreshInterval: 10000,
+      refreshInterval: 1000 * 30, // 30 seconds
     }
   );
 
@@ -119,7 +121,7 @@ export default function DetailLocation({ details, token, name }) {
                       <Typography
                         variant="small"
                         color="blue-gray"
-                        className="font-normal"
+                        className="font-bold"
                       >
                         {data.data.length - index}
                       </Typography>
@@ -130,7 +132,16 @@ export default function DetailLocation({ details, token, name }) {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {detail.time}
+                        {convertDate(detail.created_at)}
+                      </Typography>
+                    </td>
+                    <td className={classes}>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {convertTime(detail.created_at)}
                       </Typography>
                     </td>
                     <td className={classes}>
@@ -157,7 +168,7 @@ export default function DetailLocation({ details, token, name }) {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {parseFloat(detail.power) / 10}
+                        {detail.power}
                       </Typography>
                     </td>
                     <td className={classes}>
