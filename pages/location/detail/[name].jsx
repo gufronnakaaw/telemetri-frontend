@@ -16,7 +16,7 @@ import { HiArrowLeft } from 'react-icons/hi2';
 import useSWR from 'swr';
 
 const TABLE_HEAD = [
-  'No',
+  '#',
   'Date',
   'Time',
   'AC Voltage',
@@ -51,7 +51,9 @@ export default function DetailLocation({ details, token, name }) {
     },
     {
       fallback: details,
-      refreshInterval: 1000 * 30, // 30 seconds
+      refreshInterval: 1000 * 60, // 1 minute
+      revalidateOnReconnect: false,
+      revalidateIfStale: false,
     }
   );
 
@@ -70,7 +72,7 @@ export default function DetailLocation({ details, token, name }) {
 
   return (
     <Layout title={`Detail Location ${data.data.title}`}>
-      <Card className="h-full w-full rounded-lg p-5 overflow-scroll">
+      <Card className="h-full w-full rounded-lg p-5">
         <div className="mb-5">
           <Tooltip content="Back">
             <IconButton
@@ -84,190 +86,188 @@ export default function DetailLocation({ details, token, name }) {
         <Typography variant="h5">Station : {data.data.title}</Typography>
         <Typography variant="h5">Status : {data.data.status}</Typography>
 
-        <table className="mt-4 w-full min-w-max table-auto text-center">
-          <thead>
-            <tr>
-              {TABLE_HEAD.map((head, index) => (
-                <th
-                  key={index}
-                  className={`cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50 ${
-                    head == 'No' ? 'bg-gray-300' : ''
-                  }`}
-                >
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className={`flex items-center justify-center gap-2 leading-none opacity-70 ${
-                      head == 'No' ? 'font-bold' : 'font-normal'
-                    }`}
-                  >
-                    {head}
-                  </Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.data.telemetry.length == 0 ? (
+        <div className="overflow-scroll rounded-sm mt-5">
+          <table className="w-full min-w-max table-auto text-center">
+            <thead>
               <tr>
-                <td colSpan={14}>Data Kosong</td>
+                {TABLE_HEAD.map((head, index) => (
+                  <th
+                    key={index}
+                    className="cursor-pointer p-6 hover:bg-blue-gray-50"
+                  >
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="flex items-center justify-center gap-2 leading-none font-bold"
+                    >
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
               </tr>
-            ) : (
-              data.data.telemetry.map((detail, index) => {
-                const classes = 'p-4 border-b border-blue-gray-50';
+            </thead>
+            <tbody>
+              {data.data.telemetry.length == 0 ? (
+                <tr>
+                  <td colSpan={14}>Data Kosong</td>
+                </tr>
+              ) : (
+                data.data.telemetry.map((detail, index) => {
+                  const classes = 'p-6 border-b border-blue-gray-50';
 
-                return (
-                  <tr key={detail.id}>
-                    <td className={`${classes} bg-gray-300`}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-bold"
-                      >
-                        {data.data.total_data - index}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {convertDate(detail.created_at)}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {convertTime(detail.created_at)}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.ac_voltage}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.ac_current}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.power}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.energy}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.frequency}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.pf}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.dc_voltage}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.dc_current}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.suhu}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.kelembapan_air}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.water_flow}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.ketinggian_air}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {detail.volume_air}
-                      </Typography>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                  return (
+                    <tr key={detail.id} className="odd:bg-gray-200">
+                      <td className={`${classes}`}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-bold"
+                        >
+                          {data.data.total_data - index}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {convertDate(detail.created_at)}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {convertTime(detail.created_at)}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.ac_voltage}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.ac_current}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.power}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.energy}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.frequency}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.pf}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.dc_voltage}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.dc_current}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.suhu}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.kelembapan_air}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.water_flow}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.ketinggian_air}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {detail.volume_air}
+                        </Typography>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </Card>
     </Layout>
   );

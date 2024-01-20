@@ -19,7 +19,7 @@ import { HiExternalLink } from 'react-icons/hi';
 import { HiPencil, HiPlus, HiTrash } from 'react-icons/hi2';
 import useSWR from 'swr';
 
-const TABLE_HEAD = ['No', 'Name', 'Title', 'Status', 'Action'];
+const TABLE_HEAD = ['#', 'Name', 'Title', 'Status', 'Action'];
 export default function LocationDetail({ stations, token }) {
   const { data, isLoading, mutate } = useSWR(
     '/api/location/maps',
@@ -38,6 +38,8 @@ export default function LocationDetail({ stations, token }) {
     },
     {
       fallback: stations,
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
     }
   );
   const [openCreate, setOpenCreate] = useState(false);
@@ -97,12 +99,12 @@ export default function LocationDetail({ stations, token }) {
                 {TABLE_HEAD.map((head, index) => (
                   <th
                     key={index}
-                    className="cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 p-4 transition-colors hover:bg-blue-gray-50 "
+                    className="cursor-pointer border-b p-6 hover:bg-blue-gray-50"
                   >
                     <Typography
                       variant="small"
                       color="blue-gray"
-                      className="flex items-center justify-center gap-2 font-normal leading-none opacity-70 "
+                      className="flex items-center justify-center gap-2 leading-none opacity-70 font-bold"
                     >
                       {head}
                     </Typography>
@@ -112,7 +114,7 @@ export default function LocationDetail({ stations, token }) {
             </thead>
             <tbody>
               {data.data.map((map, index) => {
-                const classes = 'p-4 border-b border-blue-gray-50';
+                const classes = 'p-6 border-b border-blue-gray-50';
 
                 return (
                   <tr key={map.id}>
