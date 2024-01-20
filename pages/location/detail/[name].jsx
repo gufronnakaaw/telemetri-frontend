@@ -69,7 +69,7 @@ export default function DetailLocation({ details, token, name }) {
   }
 
   return (
-    <Layout title={`Detail Location ${name}`}>
+    <Layout title={`Detail Location ${data.data.title}`}>
       <Card className="h-full w-full rounded-lg p-5 overflow-scroll">
         <div className="mb-5">
           <Tooltip content="Back">
@@ -81,7 +81,8 @@ export default function DetailLocation({ details, token, name }) {
             </IconButton>
           </Tooltip>
         </div>
-        <Typography variant="h5">Station name : {name}</Typography>
+        <Typography variant="h5">Station : {data.data.title}</Typography>
+        <Typography variant="h5">Status : {data.data.status}</Typography>
 
         <table className="mt-4 w-full min-w-max table-auto text-center">
           <thead>
@@ -107,12 +108,12 @@ export default function DetailLocation({ details, token, name }) {
             </tr>
           </thead>
           <tbody>
-            {data.data.length == 0 ? (
+            {data.data.telemetry.length == 0 ? (
               <tr>
                 <td colSpan={14}>Data Kosong</td>
               </tr>
             ) : (
-              data.data.map((detail, index) => {
+              data.data.telemetry.map((detail, index) => {
                 const classes = 'p-4 border-b border-blue-gray-50';
 
                 return (
@@ -123,7 +124,7 @@ export default function DetailLocation({ details, token, name }) {
                         color="blue-gray"
                         className="font-bold"
                       >
-                        {data.data.length - index}
+                        {data.data.total_data - index}
                       </Typography>
                     </td>
                     <td className={classes}>

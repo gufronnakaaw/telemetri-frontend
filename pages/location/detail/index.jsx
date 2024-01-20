@@ -1,5 +1,6 @@
 import Layout from '@/components/Layout';
 import ModalCreate from '@/components/ModalCreate';
+import ModalEdit from '@/components/ModalEdit';
 import Loading from '@/components/Spinner';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import {
@@ -40,6 +41,8 @@ export default function LocationDetail({ stations, token }) {
     }
   );
   const [openCreate, setOpenCreate] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [dataEdit, setDataEdit] = useState({});
   const router = useRouter();
 
   if (isLoading) {
@@ -161,7 +164,15 @@ export default function LocationDetail({ stations, token }) {
                         </IconButton>
                       </Tooltip>
                       <Tooltip content="Edit Location">
-                        <IconButton variant="text">
+                        <IconButton
+                          variant="text"
+                          onClick={() => {
+                            setDataEdit({
+                              ...map,
+                            });
+                            setOpenEdit(true);
+                          }}
+                        >
                           <HiPencil className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
@@ -182,6 +193,12 @@ export default function LocationDetail({ stations, token }) {
         </CardBody>
       </Card>
       <ModalCreate open={openCreate} setOpen={setOpenCreate} mutate={mutate} />
+      <ModalEdit
+        open={openEdit}
+        setOpen={setOpenEdit}
+        mutate={mutate}
+        data={dataEdit}
+      />
     </Layout>
   );
 }

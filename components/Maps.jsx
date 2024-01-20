@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 
-const position = [-6.2, 106.816666];
+const position = [-1.26916, 116.825264];
 
 const icon = new Icon({
   iconUrl: '/images/pin.png',
@@ -50,7 +50,7 @@ export default function Maps() {
   }
 
   return (
-    <MapContainer center={position} zoom={7}>
+    <MapContainer center={position} zoom={5}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
