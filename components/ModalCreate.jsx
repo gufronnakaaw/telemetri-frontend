@@ -40,6 +40,7 @@ export default function ModalCreate({ open, setOpen, mutate }) {
       );
       setOpen(!open);
       mutate();
+      session.update();
     } catch (error) {
       console.log(error);
     }

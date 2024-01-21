@@ -12,7 +12,13 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
-export default function ModalEdit({ open, setOpen, mutate, data }) {
+export default function ModalEdit({
+  open,
+  setOpen,
+  mutate,
+  data,
+  setDataEdit,
+}) {
   const session = useSession();
   const [value, setValue] = useState({});
   const [status, setStatus] = useState('');
@@ -45,6 +51,7 @@ export default function ModalEdit({ open, setOpen, mutate, data }) {
       );
       setOpen(!open);
       mutate();
+      session.update();
     } catch (error) {
       console.log(error);
     }
@@ -108,6 +115,7 @@ export default function ModalEdit({ open, setOpen, mutate, data }) {
             color="red"
             onClick={() => {
               setValue({});
+              setDataEdit({});
               setOpen(!open);
             }}
             className="mr-1"

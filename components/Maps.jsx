@@ -68,7 +68,7 @@ export default function Maps() {
               ) : null}
               <p>Title: {station.title}</p>
               <p>Status: {station.status}</p>
-              <Link href={`/location/detail/${station.name}`}>
+              <Link href={`/stations/detail/${station.name}`}>
                 Lihat detail
               </Link>
             </Popup>

@@ -9,21 +9,54 @@ import {
   ListItemPrefix,
   Typography,
 } from '@material-tailwind/react';
-import { signOut } from 'next-auth/react';
+import axios from 'axios';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { FaMapLocationDot } from 'react-icons/fa6';
 import {
   HiChevronDown,
+  HiCog,
   HiMapPin,
   HiMiniArrowRightOnRectangle,
   HiMiniComputerDesktop,
-  HiOutlineInformationCircle,
 } from 'react-icons/hi2';
 
 export default function Sidebar() {
   const router = useRouter();
-  const path = router.pathname;
-  const [open, setOpen] = useState(path.startsWith('/location'));
+  const path = router.asPath;
+  const [open, setOpen] = useState(false);
+  const [stations, setStations] = useState([]);
+  const session = useSession();
+
+  useEffect(() => {
+    if (session.status == 'authenticated') {
+      getDataMaps();
+    }
+
+    async function getDataMaps() {
+      try {
+        const { data } = await axios.get(
+          'http://103.112.163.137:3001/api/location/maps',
+          {
+            headers: {
+              token: session.data.user.token,
+            },
+          }
+        );
+
+        setStations(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    return () => {};
+  }, [session]);
+
+  if (session.status == 'loading') {
+    return;
+  }
 
   return (
     <>
@@ -35,7 +68,7 @@ export default function Sidebar() {
         </div>
         <List>
           <Accordion
-            open={open}
+            open={path.startsWith('/stations') || open}
             icon={
               <HiChevronDown
                 strokeWidth={2.5}
@@ -54,46 +87,60 @@ export default function Sidebar() {
               </ListItemPrefix>
               Dashboard
             </ListItem>
-            <ListItem className="p-0" selected={open}>
+            <ListItem
+              className="p-0"
+              selected={path.startsWith('/stations') || open}
+            >
               <AccordionHeader
                 onClick={() => setOpen(!open)}
                 className="border-b-0 p-3"
               >
                 <ListItemPrefix>
-                  <HiMapPin className="h-5 w-5" />
+                  <FaMapLocationDot className="h-5 w-5" />
                 </ListItemPrefix>
                 <Typography color="blue-gray" className="mr-auto font-normal">
-                  Location
+                  Stations
                 </Typography>
               </AccordionHeader>
             </ListItem>
             <AccordionBody className="py-1">
-              <List className="p-0">
-                {/* <ListItem
-                  onClick={() => router.push('/location/maps')}
-                  className={`${path == '/location/maps' ? 'active' : ''}`}
-                >
-                  <ListItemPrefix className="ml-4">
-                    <HiMap className="h-4 w-4" />
-                  </ListItemPrefix>
-                  Maps
-                </ListItem> */}
-                <ListItem
-                  onClick={() => router.push('/location/detail')}
-                  className={`${
-                    path == '/location/detail' ||
-                    path == '/location/detail/[name]'
-                      ? 'active'
-                      : ''
-                  }`}
-                >
-                  <ListItemPrefix className="ml-4">
-                    <HiOutlineInformationCircle className="h-5 w-5" />
-                  </ListItemPrefix>
-                  Detail
-                </ListItem>
-              </List>
+              {stations.length == 0 ? (
+                <p>Loading...</p>
+              ) : (
+                stations.data.map((station, index) => {
+                  return (
+                    <List className="p-0" key={index}>
+                      <ListItem
+                        onClick={() =>
+                          router.push(`/stations/detail/${station.name}`)
+                        }
+                        className={`${
+                          path == `/stations/detail/${station.name}`
+                            ? 'active'
+                            : ''
+                        }`}
+                      >
+                        <ListItemPrefix className="ml-4">
+                          <HiMapPin className="h-5 w-5" />
+                        </ListItemPrefix>
+                        {station.title}
+                      </ListItem>
+                    </List>
+                  );
+                })
+              )}
             </AccordionBody>
+            {session.data.user.role == 'admin' ? (
+              <ListItem
+                onClick={() => router.push('/settings')}
+                className={`${path == '/settings' ? 'active' : ''}`}
+              >
+                <ListItemPrefix>
+                  <HiCog className="h-5 w-5" />
+                </ListItemPrefix>
+                Settings
+              </ListItem>
+            ) : null}
           </Accordion>
 
           <div className="absolute w-[17rem] bottom-5">

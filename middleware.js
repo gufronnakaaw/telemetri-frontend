@@ -4,16 +4,13 @@ import { NextResponse } from 'next/server';
 export default async function middleware(req) {
   if (
     req.nextUrl.pathname == '/' ||
-    req.nextUrl.pathname.startsWith('/location')
+    req.nextUrl.pathname.startsWith('/stations') ||
+    req.nextUrl.pathname == '/settings'
   ) {
     const token = await getToken({ req, secret: 'telemetrikey' });
 
     if (!token) {
       return NextResponse.redirect(new URL('/auth/login', req.url));
-    }
-
-    if (req.nextUrl.pathname == '/location') {
-      return NextResponse.redirect(new URL('/location/maps', req.url));
     }
 
     return NextResponse.next();

@@ -10,7 +10,7 @@ export default function App({
   pageProps: { session, ...pageProps },
 }) {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} refetchOnWindowFocus={false}>
       <ThemeProvider>
         <NextNProgress color="#16a34a" />
         <Toaster />
