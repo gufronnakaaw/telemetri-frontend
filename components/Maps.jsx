@@ -63,7 +63,9 @@ export default function Maps() {
             key={index}
           >
             <Popup>
-              <p>Name: {station.name}</p>
+              {session.data.user.role == 'admin' ? (
+                <p>Name: {station.name}</p>
+              ) : null}
               <p>Title: {station.title}</p>
               <p>Status: {station.status}</p>
               <Link href={`/location/detail/${station.name}`}>

@@ -52,8 +52,6 @@ export default function DetailLocation({ details, token, name }) {
     {
       fallback: details,
       refreshInterval: 1000 * 60, // 1 minute
-      revalidateOnReconnect: false,
-      revalidateIfStale: false,
     }
   );
 

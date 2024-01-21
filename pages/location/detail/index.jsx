@@ -19,8 +19,7 @@ import { HiExternalLink } from 'react-icons/hi';
 import { HiPencil, HiPlus, HiTrash } from 'react-icons/hi2';
 import useSWR from 'swr';
 
-const TABLE_HEAD = ['#', 'Name', 'Title', 'Status', 'Action'];
-export default function LocationDetail({ stations, token }) {
+export default function LocationDetail({ stations, token, role }) {
   const { data, isLoading, mutate } = useSWR(
     '/api/location/maps',
     async (url) => {
@@ -39,13 +38,16 @@ export default function LocationDetail({ stations, token }) {
     {
       fallback: stations,
       revalidateOnFocus: false,
-      revalidateIfStale: false,
     }
   );
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [dataEdit, setDataEdit] = useState({});
   const router = useRouter();
+  const TABLE_HEAD =
+    role == 'admin'
+      ? ['#', 'Name', 'Title', 'Status', 'Action']
+      : ['#', 'Title', 'Status', 'Action'];
 
   if (isLoading) {
     return <Loading />;
@@ -80,16 +82,18 @@ export default function LocationDetail({ stations, token }) {
                 See information about all locations
               </Typography>
             </div>
-            <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-              <Tooltip content="Add Location">
-                <IconButton
-                  variant="text"
-                  onClick={() => setOpenCreate(!openCreate)}
-                >
-                  <HiPlus strokeWidth={2} className="h-7 w-7" />
-                </IconButton>
-              </Tooltip>
-            </div>
+            {role == 'admin' ? (
+              <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+                <Tooltip content="Add Location">
+                  <IconButton
+                    variant="text"
+                    onClick={() => setOpenCreate(!openCreate)}
+                  >
+                    <HiPlus strokeWidth={2} className="h-7 w-7" />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            ) : null}
           </div>
         </CardHeader>
         <CardBody className="px-0">
@@ -104,7 +108,7 @@ export default function LocationDetail({ stations, token }) {
                     <Typography
                       variant="small"
                       color="blue-gray"
-                      className="flex items-center justify-center gap-2 leading-none opacity-70 font-bold"
+                      className="flex items-center justify-center gap-2 leading-none font-bold"
                     >
                       {head}
                     </Typography>
@@ -117,7 +121,7 @@ export default function LocationDetail({ stations, token }) {
                 const classes = 'p-6 border-b border-blue-gray-50';
 
                 return (
-                  <tr key={map.id}>
+                  <tr key={map.id} className="odd:bg-gray-200">
                     <td className={classes}>
                       <Typography
                         variant="small"
@@ -127,15 +131,17 @@ export default function LocationDetail({ stations, token }) {
                         {index + 1}
                       </Typography>
                     </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {map.name}
-                      </Typography>
-                    </td>
+                    {role == 'admin' ? (
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal"
+                        >
+                          {map.name}
+                        </Typography>
+                      </td>
+                    ) : null}
                     <td className={classes}>
                       <Typography
                         variant="small"
@@ -165,27 +171,31 @@ export default function LocationDetail({ stations, token }) {
                           <HiExternalLink className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip content="Edit Location">
-                        <IconButton
-                          variant="text"
-                          onClick={() => {
-                            setDataEdit({
-                              ...map,
-                            });
-                            setOpenEdit(true);
-                          }}
-                        >
-                          <HiPencil className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip content="Delete Location">
-                        <IconButton
-                          variant="text"
-                          onClick={() => handleDelete(map.name)}
-                        >
-                          <HiTrash className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
+                      {role == 'admin' ? (
+                        <>
+                          <Tooltip content="Edit Location">
+                            <IconButton
+                              variant="text"
+                              onClick={() => {
+                                setDataEdit({
+                                  ...map,
+                                });
+                                setOpenEdit(true);
+                              }}
+                            >
+                              <HiPencil className="h-4 w-4" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip content="Delete Location">
+                            <IconButton
+                              variant="text"
+                              onClick={() => handleDelete(map.name)}
+                            >
+                              <HiTrash className="h-4 w-4" />
+                            </IconButton>
+                          </Tooltip>
+                        </>
+                      ) : null}
                     </td>
                   </tr>
                 );
@@ -194,13 +204,21 @@ export default function LocationDetail({ stations, token }) {
           </table>
         </CardBody>
       </Card>
-      <ModalCreate open={openCreate} setOpen={setOpenCreate} mutate={mutate} />
-      <ModalEdit
-        open={openEdit}
-        setOpen={setOpenEdit}
-        mutate={mutate}
-        data={dataEdit}
-      />
+      {role == 'admin' ? (
+        <>
+          <ModalCreate
+            open={openCreate}
+            setOpen={setOpenCreate}
+            mutate={mutate}
+          />
+          <ModalEdit
+            open={openEdit}
+            setOpen={setOpenEdit}
+            mutate={mutate}
+            data={dataEdit}
+          />
+        </>
+      ) : null}
     </Layout>
   );
 }
@@ -222,6 +240,7 @@ export async function getServerSideProps({ req, res }) {
       props: {
         stations: data,
         token: session.user.token,
+        role: session.user.role,
       },
     };
   } catch (error) {
