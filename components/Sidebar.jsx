@@ -7,6 +7,7 @@ import {
   List,
   ListItem,
   ListItemPrefix,
+  Spinner,
   Typography,
 } from '@material-tailwind/react';
 import axios from 'axios';
@@ -50,12 +51,14 @@ export default function Sidebar() {
         console.log(error);
       }
     }
-
-    return () => {};
   }, [session]);
 
   if (session.status == 'loading') {
-    return;
+    return (
+      <Card className="h-full w-full max-w-[20rem] p-4 flex items-center justify-center">
+        <Spinner color="green" className="h-8 w-8" />
+      </Card>
+    );
   }
 
   return (
@@ -147,9 +150,9 @@ export default function Sidebar() {
             <Button
               variant="text"
               className="inline-flex w-full h-12 items-center justify-center gap-2 bg-gray-300 text-gray-600 hover:bg-gray-400"
-              onClick={async () => {
+              onClick={() => {
                 if (confirm('are you sure?')) {
-                  await signOut();
+                  signOut();
                 }
               }}
             >

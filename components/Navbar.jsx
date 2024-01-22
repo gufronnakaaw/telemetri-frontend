@@ -1,5 +1,4 @@
 import {
-  IconButton,
   Menu,
   MenuHandler,
   MenuItem,
@@ -7,55 +6,39 @@ import {
   Typography,
 } from '@material-tailwind/react';
 import { signOut, useSession } from 'next-auth/react';
-import { HiCheckBadge, HiMiniArrowRightOnRectangle } from 'react-icons/hi2';
+import { HiMiniArrowRightOnRectangle } from 'react-icons/hi2';
 
 export default function Navbar() {
   const { data, status } = useSession();
 
-  if (status == 'loading') {
-    return;
-  }
-
   return (
-    <nav className="border-b border-gray-100 bg-white px-6 dark:border-blue-gray-800 dark:bg-blue-gray-900">
+    <nav className="border-b border-gray-100 bg-white px-6">
       <div className="flex h-16 items-center justify-between md:justify-end">
-        <IconButton
-          size="sm"
-          variant="outlined"
-          className="text-xl text-gray-900 dark:border-white dark:text-white md:hidden"
-        >
-          <HiCheckBadge size={20} weight="bold" />
-        </IconButton>
-
         <div className="inline-flex items-center gap-6">
           <Menu placement="bottom-end" allowHover>
             <MenuHandler>
               <div className="inline-flex cursor-pointer items-center gap-1.5">
-                <Typography className="font-semibold capitalize text-gray-900 dark:text-white">
-                  {data.user.fullname}
+                <Typography className="font-semibold capitalize text-gray-900">
+                  {status == 'loading' ? 'loading...' : data.user.fullname}
                 </Typography>
-
-                <div className="text-blue-500">
-                  <HiCheckBadge size={20} weight="fill" />
-                </div>
               </div>
             </MenuHandler>
 
             <MenuList>
               <MenuItem>
                 <Typography className="font-semibold text-gray-900">
-                  {data.user.fullname}
+                  {status == 'loading' ? 'loading...' : data.user.fullname}
                 </Typography>
                 <Typography className="text-sm font-medium text-gray-500">
-                  {data.user.email}
+                  {status == 'loading' ? 'loading...' : data.user.email}
                 </Typography>
               </MenuItem>
               <hr className="my-3" />
               <MenuItem
                 className="flex items-center gap-2 text-gray-500"
-                onClick={async () => {
+                onClick={() => {
                   if (confirm('are you sure?')) {
-                    await signOut();
+                    signOut();
                   }
                 }}
               >
