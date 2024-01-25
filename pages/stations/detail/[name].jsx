@@ -8,23 +8,6 @@ import { getServerSession } from 'next-auth';
 import Toast from 'react-hot-toast';
 import useSWR from 'swr';
 
-// const TABLE_HEAD = [
-//   'Date',
-//   'Time',
-//   'AC Voltage',
-//   'AC Current',
-//   'Power',
-//   'Energy',
-//   'Frequency',
-//   'PF',
-//   'DC Voltage',
-//   'DC Current',
-//   'Suhu',
-//   'Kelembapan Air',
-//   'Water Flow',
-//   'Ketinggian Air',
-//   'Volume Air',
-// ];
 export default function DetailStations({ details, token, name }) {
   const { data, isLoading, isValidating } = useSWR(
     `/api/location/detail/${name}`,
@@ -47,33 +30,6 @@ export default function DetailStations({ details, token, name }) {
     }
   );
 
-  let TABLE_HEAD;
-
-  switch (name) {
-    case 'D1335':
-      TABLE_HEAD = [
-        'ac_voltage',
-        'ac_current',
-        'power',
-        'energy',
-        'frequency',
-        'pf',
-      ];
-      break;
-    case 'D1336':
-      TABLE_HEAD = ['dc_voltage', 'dc_current', 'suhu', 'kelembapan_air'];
-      break;
-    case 'D1337':
-      TABLE_HEAD = [
-        'suhu',
-        'kelembapan_air',
-        'water_flow',
-        'ketinggian_air',
-        'volume_air',
-      ];
-      break;
-  }
-
   if (isLoading) {
     return <Loading />;
   }
@@ -95,20 +51,22 @@ export default function DetailStations({ details, token, name }) {
           <table className="w-full min-w-max table-auto text-center">
             <thead>
               <tr>
-                {['date', 'time', ...TABLE_HEAD].map((head, index) => (
-                  <th
-                    key={index}
-                    className="cursor-pointer p-6 hover:bg-blue-gray-50"
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="flex items-center justify-center gap-2 leading-none font-bold"
+                {['Date', 'Time', ...data.data.instrument].map(
+                  (head, index) => (
+                    <th
+                      key={index}
+                      className="cursor-pointer p-6 hover:bg-blue-gray-50"
                     >
-                      {head}
-                    </Typography>
-                  </th>
-                ))}
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="flex items-center justify-center gap-2 leading-none font-bold"
+                      >
+                        {typeof head == 'string' ? head : head.name}
+                      </Typography>
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody>
@@ -141,7 +99,7 @@ export default function DetailStations({ details, token, name }) {
                         </Typography>
                       </td>
 
-                      {TABLE_HEAD.map((head, index) => {
+                      {data.data.instrument.map((element, index) => {
                         return (
                           <td className={classes} key={index}>
                             <Typography
@@ -149,7 +107,7 @@ export default function DetailStations({ details, token, name }) {
                               color="blue-gray"
                               className="font-normal"
                             >
-                              {detail[head]}
+                              {detail[element.field]}
                             </Typography>
                           </td>
                         );

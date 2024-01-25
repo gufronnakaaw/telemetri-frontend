@@ -1,18 +1,22 @@
+import Layout from '@/components/Layout';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import {
   Button,
+  Card,
   Checkbox,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
+  IconButton,
   Input,
   Option,
   Select,
+  Tooltip,
   Typography,
 } from '@material-tailwind/react';
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
+import { getServerSession } from 'next-auth';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
+import Toast from 'react-hot-toast';
+import { HiArrowLeft } from 'react-icons/hi2';
 
 const HEAD = [
   {
@@ -69,11 +73,13 @@ const HEAD = [
   },
 ];
 
-export default function ModalCreate({ open, setOpen, mutate }) {
-  const session = useSession();
-  const [value, setValue] = useState({});
-  const [status, setStatus] = useState('');
-  const instrument = [];
+export default function StationEdit({ station, token }) {
+  const { instrument, status: statusProp, ...all } = station;
+  const [value, setValue] = useState(all);
+  const [status, setStatus] = useState(statusProp);
+
+  const updateInstrument = [...instrument[0].data];
+  const router = useRouter();
 
   function handleValue(e) {
     setValue({
@@ -82,54 +88,63 @@ export default function ModalCreate({ open, setOpen, mutate }) {
     });
   }
 
-  async function handleCreate() {
-    if (instrument.length == 0) {
+  async function handleUpdate() {
+    if (updateInstrument.length == 0) {
       return alert('instrument is required!');
     }
 
     try {
-      await axios.post(
+      await axios.patch(
         'http://103.112.163.137:3001/api/location',
         {
           ...value,
           status,
-          instrument,
+          instrument: updateInstrument,
         },
         {
           headers: {
-            token: session.data.user.token,
+            token,
           },
         }
       );
-      setOpen(!open);
-      mutate();
-      session.update();
+
+      Toast.success('the station has been updated', {
+        position: 'top-right',
+      });
+      router.push('/settings');
     } catch (error) {
       console.log(error);
     }
   }
 
   function handleInstrument(e) {
-    const index = instrument.findIndex(
-      (element) => element.field == e.target.dataset.field
+    const { name, field } = e.target.dataset;
+
+    const findIndex = updateInstrument.findIndex(
+      (element) => element.field == field
     );
 
-    if (index == -1) {
-      instrument.push({
-        name: e.target.dataset.name,
-        field: e.target.dataset.field,
-        checked: e.target.checked,
+    if (findIndex == -1) {
+      updateInstrument.push({
+        name: name,
+        field: field,
       });
     } else {
-      instrument.splice(index, 1);
+      updateInstrument.splice(findIndex, 1);
     }
   }
-
   return (
-    <>
-      <Dialog open={open} handler={() => setOpen(!open)}>
-        <DialogHeader>Create Location</DialogHeader>
-        <DialogBody className="flex flex-col gap-3">
+    <Layout title="Edit Station">
+      <Card className="h-full w-full p-5">
+        <div className="mb-5">
+          <Tooltip content="Back">
+            <IconButton variant="text" onClick={() => router.push('/settings')}>
+              <HiArrowLeft className="h-6 w-6" />
+            </IconButton>
+          </Tooltip>
+        </div>
+        <div className="flex flex-col gap-3 ">
+          <Typography variant="h3">Edit Station</Typography>
           <div className="flex gap-2">
             <Input
               autoComplete="off"
@@ -137,6 +152,7 @@ export default function ModalCreate({ open, setOpen, mutate }) {
               name="name"
               onChange={handleValue}
               placeholder="example: D1030"
+              defaultValue={value.name}
             />
             <Input
               autoComplete="off"
@@ -144,6 +160,7 @@ export default function ModalCreate({ open, setOpen, mutate }) {
               name="title"
               onChange={handleValue}
               placeholder="example: Testing Station"
+              defaultValue={value.title}
             />
           </div>
           <div className="flex gap-2">
@@ -152,12 +169,14 @@ export default function ModalCreate({ open, setOpen, mutate }) {
               label="Latitude"
               name="lat"
               onChange={handleValue}
+              defaultValue={value.lat}
             />
             <Input
               autoComplete="off"
               label="Longitude"
               name="long"
               onChange={handleValue}
+              defaultValue={value.long}
             />
           </div>
           <div className="flex gap-2">
@@ -166,39 +185,67 @@ export default function ModalCreate({ open, setOpen, mutate }) {
               <Option value="inactive">Inactive</Option>
             </Select>
           </div>
-
           <div className="flex gap-2 flex-col">
             <Typography>Instrument</Typography>
             <div className="grid grid-cols-3">
-              {HEAD.map((element, index) => {
+              {HEAD.map((element) => {
+                const listChecked = instrument[0].data.findIndex(
+                  (el) => element.field == el.field
+                );
+
                 return (
                   <Checkbox
                     label={element.name}
-                    defaultChecked={false}
+                    defaultChecked={listChecked != -1}
                     data-name={element.name}
                     data-field={element.field}
-                    key={index}
+                    key={element.name}
                     onClick={handleInstrument}
                   />
                 );
               })}
             </div>
           </div>
-        </DialogBody>
-        <DialogFooter>
-          <Button
-            variant="text"
-            color="red"
-            onClick={() => setOpen(!open)}
-            className="mr-1"
-          >
-            <span>Cancel</span>
-          </Button>
-          <Button variant="gradient" color="black" onClick={handleCreate}>
-            <span>Create</span>
-          </Button>
-        </DialogFooter>
-      </Dialog>
-    </>
+
+          <div>
+            <Button variant="gradient" color="black" onClick={handleUpdate}>
+              <span>Update</span>
+            </Button>
+          </div>
+        </div>
+      </Card>
+    </Layout>
   );
+}
+
+export async function getServerSideProps({ req, res, params }) {
+  const session = await getServerSession(req, res, authOptions);
+
+  if (session.user.role !== 'admin') {
+    return {
+      redirect: {
+        destination: '/',
+      },
+    };
+  }
+
+  try {
+    const { data } = await axios.get(
+      'http://103.112.163.137:3001/api/location/maps',
+      {
+        headers: {
+          token: session.user.token,
+        },
+      }
+    );
+
+    return {
+      props: {
+        station: data.data.filter((element) => element.name == params.name)[0],
+        token: session.user.token,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
 }
