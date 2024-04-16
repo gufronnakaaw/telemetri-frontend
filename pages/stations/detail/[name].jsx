@@ -2,9 +2,18 @@ import Layout from '@/components/Layout';
 import Loading from '@/components/Spinner';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { convertDate, convertTime } from '@/utils/convert';
-import { Card, Typography } from '@material-tailwind/react';
+import {
+  Button,
+  Card,
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
+  Typography,
+} from '@material-tailwind/react';
 import axios from 'axios';
 import { getServerSession } from 'next-auth';
+import Link from 'next/link';
 import Toast from 'react-hot-toast';
 import useSWR from 'swr';
 
@@ -44,23 +53,43 @@ export default function DetailStations({ details, token, name }) {
   return (
     <Layout title={`Detail Station ${data.data.title}`}>
       <Card className="h-full w-full rounded-lg p-5">
-        <Typography variant="h5">Station : {data.data.title}</Typography>
-        <Typography variant="h5">Status : {data.data.status}</Typography>
+        <Typography variant="h6" className="font-inter">
+          Station : {data.data.title}
+        </Typography>
+        <Typography variant="h6" className="font-inter">
+          Status : {data.data.status}
+        </Typography>
 
-        <div className="overflow-scroll rounded-sm mt-5">
+        <div className="flex justify-end gap-2">
+          <Menu>
+            <MenuHandler>
+              <Button className="bg-custom-gray-one capitalize" size="sm">
+                Filter
+              </Button>
+            </MenuHandler>
+            <MenuList>
+              <MenuItem>By Date</MenuItem>
+              <MenuItem>By Time</MenuItem>
+            </MenuList>
+          </Menu>
+          <Link href="/telemetri.xlsx" download>
+            <Button className="bg-custom-gray-one capitalize" size="sm">
+              Export
+            </Button>
+          </Link>
+        </div>
+
+        <div className="overflow-scroll rounded-lg border border-gray-300 mt-5">
           <table className="w-full min-w-max table-auto text-center">
             <thead>
               <tr>
                 {['Date', 'Time', ...data.data.instrument].map(
                   (head, index) => (
-                    <th
-                      key={index}
-                      className="cursor-pointer p-6 hover:bg-blue-gray-50"
-                    >
+                    <th key={index} className="p-4 bg-custom-gray-two">
                       <Typography
                         variant="small"
                         color="blue-gray"
-                        className="flex items-center justify-center gap-2 leading-none font-bold"
+                        className="flex items-center justify-center gap-2 leading-none font-semibold font-inter"
                       >
                         {typeof head == 'string' ? head : head.name}
                       </Typography>
@@ -76,15 +105,15 @@ export default function DetailStations({ details, token, name }) {
                 </tr>
               ) : (
                 data.data.telemetry.map((detail) => {
-                  const classes = 'p-6 border-b border-blue-gray-50';
+                  const classes = 'border-b p-2 ';
 
                   return (
-                    <tr key={detail.id} className="odd:bg-gray-200">
+                    <tr key={detail.id}>
                       <td className={classes}>
                         <Typography
                           variant="small"
                           color="blue-gray"
-                          className="font-normal"
+                          className="font-normal font-inter"
                         >
                           {convertDate(detail.created_at)}
                         </Typography>
@@ -93,7 +122,7 @@ export default function DetailStations({ details, token, name }) {
                         <Typography
                           variant="small"
                           color="blue-gray"
-                          className="font-normal"
+                          className="font-normal font-inter"
                         >
                           {convertTime(detail.created_at)}
                         </Typography>
@@ -105,7 +134,7 @@ export default function DetailStations({ details, token, name }) {
                             <Typography
                               variant="small"
                               color="blue-gray"
-                              className="font-normal"
+                              className="font-normal font-inter"
                             >
                               {detail[element.field]}
                             </Typography>

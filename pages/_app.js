@@ -15,9 +15,9 @@ export default function App({
 
   useEffect(() => {
     window.onfocus = async () => {
-      const session = await getSession();
+      if (!router.asPath.startsWith('/auth')) {
+        const session = await getSession();
 
-      if (router.asPath !== '/auth/login') {
         if (!session) {
           Toast.error('session expired', {
             position: 'top-right',
@@ -31,7 +31,7 @@ export default function App({
   return (
     <SessionProvider session={session} refetchOnWindowFocus={false}>
       <ThemeProvider>
-        <NextNProgress color="#16a34a" />
+        <NextNProgress color="#2e2e2e" />
         <Toaster />
         <Component {...pageProps} />
       </ThemeProvider>

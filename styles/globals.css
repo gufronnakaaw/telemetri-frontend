@@ -1,25 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Figtree&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  @apply font-figtree;
+  @apply font-sans;
 }
 
 .leaflet-container {
-  @apply h-full w-full rounded-md;
+  @apply h-full w-full;
 }
 
 .active {
-  @apply bg-gray-300;
+  @apply bg-custom-gray-two font-semibold;
 }
 
 ::-webkit-scrollbar {
-  @apply h-2 bg-transparent;
+  @apply h-2 w-2 bg-transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-gray-300 hover:bg-gray-400 dark:bg-blue-gray-500 dark:hover:bg-blue-gray-600;
+  @apply rounded-sm bg-gray-300 hover:bg-gray-400 dark:bg-blue-gray-500 dark:hover:bg-blue-gray-600;
 }

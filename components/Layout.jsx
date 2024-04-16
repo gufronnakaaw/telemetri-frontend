@@ -12,9 +12,12 @@ export default function Layout({ children, title }) {
         <Sidebar />
         <div className={`flex flex-1 flex-col w-[1200px]`}>
           <Navbar />
-          <main className="h-full overflow-y-auto p-6 scrollbar-hide">
+          <main className="h-full overflow-y-auto scrollbar-hide">
             {children}
           </main>
+          <p className="text-center font-inter relative bottom-2 text-sm">
+            PT. RODA HARAPAN SEMESTA
+          </p>
         </div>
       </div>
     </>

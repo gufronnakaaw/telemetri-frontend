@@ -144,8 +144,10 @@ export default function StationEdit({ station, token }) {
           </Tooltip>
         </div>
         <div className="flex flex-col gap-3 ">
-          <Typography variant="h3">Edit Station</Typography>
-          <div className="flex gap-2">
+          <Typography variant="h3" className="font-inter">
+            Edit Station
+          </Typography>
+          <div className="flex gap-2 font-inter">
             <Input
               autoComplete="off"
               label="Name"
@@ -163,7 +165,7 @@ export default function StationEdit({ station, token }) {
               defaultValue={value.title}
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 font-inter">
             <Input
               autoComplete="off"
               label="Latitude"
@@ -179,13 +181,13 @@ export default function StationEdit({ station, token }) {
               defaultValue={value.long}
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 font-inter">
             <Select label="Status" onChange={(e) => setStatus(e)}>
               <Option value="active">Active</Option>
               <Option value="inactive">Inactive</Option>
             </Select>
           </div>
-          <div className="flex gap-2 flex-col">
+          <div className="flex gap-2 flex-col font-inter">
             <Typography>Instrument</Typography>
             <div className="grid grid-cols-3">
               {HEAD.map((element) => {
@@ -208,8 +210,8 @@ export default function StationEdit({ station, token }) {
           </div>
 
           <div>
-            <Button variant="gradient" color="black" onClick={handleUpdate}>
-              <span>Update</span>
+            <Button className="font-inter capitalize" onClick={handleUpdate}>
+              Update
             </Button>
           </div>
         </div>

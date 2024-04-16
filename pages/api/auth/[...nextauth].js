@@ -27,7 +27,7 @@ export const authOptions = {
 
           return { ...data.data };
         } catch (error) {
-          return false;
+          throw new Error(JSON.stringify(error.response.data));
         }
       },
     }),

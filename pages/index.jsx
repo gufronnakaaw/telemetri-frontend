@@ -9,7 +9,7 @@ const Maps = dynamic(() => import('@/components/Maps'), {
 export default function Home() {
   return (
     <Layout title="Dashboard">
-      <Card className="h-full w-full rounded-lg">
+      <Card className="h-full w-full p-3 rounded-md">
         <Maps />
       </Card>
     </Layout>

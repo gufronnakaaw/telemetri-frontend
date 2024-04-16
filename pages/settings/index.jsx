@@ -3,20 +3,23 @@ import ModalCreate from '@/components/ModalCreate';
 import Loading from '@/components/Spinner';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import {
+  Button,
   Card,
   CardBody,
   CardHeader,
-  IconButton,
-  Tooltip,
+  Menu,
+  MenuHandler,
+  MenuItem,
+  MenuList,
   Typography,
 } from '@material-tailwind/react';
 import axios from 'axios';
 import { getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { HiExternalLink } from 'react-icons/hi';
-import { HiPencil, HiPlus, HiTrash } from 'react-icons/hi2';
+import { HiEllipsisVertical } from 'react-icons/hi2';
 import useSWR from 'swr';
 
 export default function LocationDetail({ stations, token, role }) {
@@ -68,126 +71,128 @@ export default function LocationDetail({ stations, token, role }) {
 
   return (
     <Layout title="Settings">
-      <Card className="h-full w-full">
+      <Card className="h-full w-full rounded-none">
         <CardHeader floated={false} shadow={false} className="rounded-none">
-          <div className="mb-4 flex items-center justify-between gap-8">
+          <div className="flex items-center justify-between">
             <div>
-              <Typography variant="h5" color="blue-gray">
-                Locations list
-              </Typography>
-              <Typography color="gray" className="mt-1 font-normal">
-                See information about all locations
+              <Typography variant="h4" color="blue-gray" className="font-inter">
+                Locations
               </Typography>
             </div>
-            <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
-              <Tooltip content="Add Location">
-                <IconButton
-                  variant="text"
-                  onClick={() => setOpenCreate(!openCreate)}
-                >
-                  <HiPlus strokeWidth={2} className="h-7 w-7" />
-                </IconButton>
-              </Tooltip>
+            <div className="flex shrink-0 flex-col sm:flex-row">
+              <Button
+                onClick={() => setOpenCreate(!openCreate)}
+                size="md"
+                className="font-inter capitalize font-semibold"
+              >
+                Create Location
+              </Button>
             </div>
           </div>
         </CardHeader>
-        <CardBody className="px-0">
-          <table className="w-full min-w-max table-auto text-center">
-            <thead>
-              <tr>
-                {TABLE_HEAD.map((head, index) => (
-                  <th
-                    key={index}
-                    className="cursor-pointer border-b p-6 hover:bg-blue-gray-50"
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="flex items-center justify-center gap-2 leading-none font-bold"
-                    >
-                      {head}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data.data.map((map, index) => {
-                const classes = 'p-6 border-b border-blue-gray-50';
+        <CardBody className="px-2">
+          <div className="flex justify-end gap-2">
+            <Menu>
+              <MenuHandler>
+                <Button className="bg-custom-gray-one capitalize" size="sm">
+                  Filter
+                </Button>
+              </MenuHandler>
+              <MenuList>
+                <MenuItem>By Date</MenuItem>
+                <MenuItem>By Time</MenuItem>
+              </MenuList>
+            </Menu>
+            <Link href="/telemetri.xlsx" download>
+              <Button className="bg-custom-gray-one capitalize" size="sm">
+                Export
+              </Button>
+            </Link>
+          </div>
+          <div className="rounded-lg overflow-hidden border border-gray-300 mt-5">
+            <table className="w-full min-w-max table-auto text-center">
+              <thead className="rounded-2xl">
+                <tr>
+                  {TABLE_HEAD.map((head, index) => (
+                    <th key={index} className="p-4 bg-custom-gray-two">
+                      <Typography
+                        variant="small"
+                        className="flex items-center justify-center gap-2 leading-none font-semibold font-inter text-custom-gray-one"
+                      >
+                        {head}
+                      </Typography>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {data.data.map((map, index) => {
+                  const classes = 'border-b p-2';
 
-                return (
-                  <tr key={map.id} className="odd:bg-gray-200">
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {index + 1}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {map.name}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {map.title}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {map.status}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Tooltip content="Detail Station">
-                        <IconButton
-                          variant="text"
-                          onClick={() =>
-                            router.push(`/stations/detail/${map.name}`)
-                          }
+                  return (
+                    <tr key={map.id}>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal font-inter"
                         >
-                          <HiExternalLink className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip content="Edit Station">
-                        <IconButton
-                          variant="text"
-                          onClick={() =>
-                            router.push(`/settings/edit/stations/${map.name}`)
-                          }
+                          {index + 1}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal font-inter"
                         >
-                          <HiPencil className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip content="Delete Station">
-                        <IconButton
-                          variant="text"
-                          onClick={() => handleDelete(map.name)}
+                          {map.name}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal font-inter"
                         >
-                          <HiTrash className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                          {map.title}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal font-inter"
+                        >
+                          {map.status}
+                        </Typography>
+                      </td>
+                      <td className={classes}>
+                        <Menu>
+                          <MenuHandler>
+                            <button className="cursor-pointer hover:bg-gray-200 transition rounded-sm">
+                              <HiEllipsisVertical className="w-5 h-5" />
+                            </button>
+                          </MenuHandler>
+                          <MenuList>
+                            <Link href={`/stations/detail/${map.name}`}>
+                              <MenuItem>Detail</MenuItem>
+                            </Link>
+                            <Link href={`/settings/edit/stations/${map.name}`}>
+                              <MenuItem>Edit</MenuItem>
+                            </Link>
+                            <MenuItem onClick={() => handleDelete(map.name)}>
+                              Delete
+                            </MenuItem>
+                          </MenuList>
+                        </Menu>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </CardBody>
       </Card>
       <ModalCreate open={openCreate} setOpen={setOpenCreate} mutate={mutate} />

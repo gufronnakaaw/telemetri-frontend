@@ -56,17 +56,17 @@ export default function Sidebar() {
   if (session.status == 'loading') {
     return (
       <Card className="h-full w-full max-w-[20rem] p-4 flex items-center justify-center">
-        <Spinner color="green" className="h-8 w-8" />
+        <Spinner className="h-8 w-8" />
       </Card>
     );
   }
 
   return (
     <>
-      <Card className="h-full w-full max-w-[20rem] p-4">
+      <Card className="h-full w-full max-w-[20rem] p-4 border-r border-gray-200 rounded-none">
         <div className="mb-2 p-4 text-center">
-          <Typography variant="h5" color="blue-gray">
-            Telemetri Dashboard
+          <Typography variant="h5" color="blue-gray" className="font-inter">
+            Telemetri Dashboard (Demo)
           </Typography>
         </div>
         <List>
@@ -83,7 +83,7 @@ export default function Sidebar() {
           >
             <ListItem
               onClick={() => router.push('/')}
-              className={`${path == '/' ? 'active' : ''}`}
+              className={`${path == '/' ? 'active' : ''}  font-inter`}
             >
               <ListItemPrefix>
                 <HiMiniComputerDesktop className="h-5 w-5" />
@@ -101,8 +101,11 @@ export default function Sidebar() {
                 <ListItemPrefix>
                   <FaMapLocationDot className="h-5 w-5" />
                 </ListItemPrefix>
-                <Typography color="blue-gray" className="mr-auto font-normal">
-                  Stations
+                <Typography
+                  color="blue-gray"
+                  className="mr-auto font-normal font-inter"
+                >
+                  KM LENTERA JAYA 1
                 </Typography>
               </AccordionHeader>
             </ListItem>
@@ -121,7 +124,7 @@ export default function Sidebar() {
                           path == `/stations/detail/${station.name}`
                             ? 'active'
                             : ''
-                        }`}
+                        } font-inter`}
                       >
                         <ListItemPrefix className="ml-4">
                           <HiMapPin className="h-5 w-5" />
@@ -136,7 +139,7 @@ export default function Sidebar() {
             {session.data.user.role == 'admin' ? (
               <ListItem
                 onClick={() => router.push('/settings')}
-                className={`${path == '/settings' ? 'active' : ''}`}
+                className={`${path == '/settings' ? 'active' : ''} font-inter`}
               >
                 <ListItemPrefix>
                   <HiCog className="h-5 w-5" />
@@ -149,7 +152,7 @@ export default function Sidebar() {
           <div className="absolute w-[17rem] bottom-5">
             <Button
               variant="text"
-              className="inline-flex w-full h-12 items-center justify-center gap-2 bg-gray-300 text-gray-600 hover:bg-gray-400"
+              className="inline-flex w-full h-12 items-center justify-center gap-2 bg-gray-300 text-gray-600 hover:bg-gray-200"
               onClick={() => {
                 if (confirm('are you sure?')) {
                   signOut();
@@ -157,7 +160,7 @@ export default function Sidebar() {
               }}
             >
               <HiMiniArrowRightOnRectangle size={24} weight="bold" />
-              <Typography className="font-semibold capitalize">
+              <Typography className="font-semibold capitalize font-inter">
                 Sign Out
               </Typography>
             </Button>

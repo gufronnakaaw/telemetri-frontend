@@ -10,9 +10,13 @@ module.exports = withMT({
   theme: {
     extend: {
       fontFamily: {
-        figtree: 'Figtree',
-        poppins: 'Poppins',
+        sans: 'Open Sans',
+        inter: 'Inter',
       },
+    },
+    colors: {
+      'custom-gray-one': '#2e2e2e',
+      'custom-gray-two': '#ebebeb',
     },
   },
   plugins: [],

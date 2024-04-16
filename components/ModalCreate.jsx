@@ -128,9 +128,9 @@ export default function ModalCreate({ open, setOpen, mutate }) {
   return (
     <>
       <Dialog open={open} handler={() => setOpen(!open)}>
-        <DialogHeader>Create Location</DialogHeader>
+        <DialogHeader className="font-inter">Create Location</DialogHeader>
         <DialogBody className="flex flex-col gap-3">
-          <div className="flex gap-2">
+          <div className="flex gap-2 font-inter">
             <Input
               autoComplete="off"
               label="Name"
@@ -146,7 +146,7 @@ export default function ModalCreate({ open, setOpen, mutate }) {
               placeholder="example: Testing Station"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 font-inter">
             <Input
               autoComplete="off"
               label="Latitude"
@@ -160,14 +160,14 @@ export default function ModalCreate({ open, setOpen, mutate }) {
               onChange={handleValue}
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 font-inter">
             <Select label="Status" onChange={(e) => setStatus(e)}>
               <Option value="active">Active</Option>
               <Option value="inactive">Inactive</Option>
             </Select>
           </div>
 
-          <div className="flex gap-2 flex-col">
+          <div className="flex gap-2 flex-col font-inter">
             <Typography>Instrument</Typography>
             <div className="grid grid-cols-3">
               {HEAD.map((element, index) => {
@@ -190,12 +190,12 @@ export default function ModalCreate({ open, setOpen, mutate }) {
             variant="text"
             color="red"
             onClick={() => setOpen(!open)}
-            className="mr-1"
+            className="mr-1 font-inter capitalize"
           >
-            <span>Cancel</span>
+            Cancel
           </Button>
-          <Button variant="gradient" color="black" onClick={handleCreate}>
-            <span>Create</span>
+          <Button onClick={handleCreate} className="capitalize font-inter">
+            Create
           </Button>
         </DialogFooter>
       </Dialog>

@@ -44,7 +44,7 @@ export default function Maps() {
   if (stations.length == 0) {
     return (
       <div className="w-full h-full flex items-center justify-center">
-        <Spinner color="green" className="h-10 w-10" />
+        <Spinner className="h-8 w-8" />
       </div>
     );
   }

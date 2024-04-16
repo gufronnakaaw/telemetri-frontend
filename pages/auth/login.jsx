@@ -1,44 +1,46 @@
-import { Button, Spinner } from '@material-tailwind/react';
-import Head from 'next/head';
-import Image from 'next/image';
-import { HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
-
+import { Button, Input, Spinner } from '@material-tailwind/react';
 import { signIn } from 'next-auth/react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import Toast from 'react-hot-toast';
+import { HiKey, HiOutlineMail } from 'react-icons/hi';
 
 export default function Login() {
-  const [type, setType] = useState('password');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false);
   const router = useRouter();
-
-  const [disabled, setDisabled] = useState(true);
 
   async function handleLogin() {
     if (email == '' || password == '') return;
 
-    setDisabled(true);
     setLoading(true);
-    const { ok } = await signIn('credentials', {
+    setDisabled(true);
+
+    const { ok, error } = await signIn('credentials', {
       email,
       password,
-      callbackUrl: '/',
       redirect: false,
     });
 
-    setDisabled(false);
     setLoading(false);
+    setDisabled(false);
+
+    if (error) {
+      const { errors } = JSON.parse(error);
+
+      errors.forEach(({ message }) => {
+        Toast.error(message, {
+          position: 'top-right',
+        });
+      });
+    }
 
     if (ok) {
       return router.push('/');
     }
-
-    Toast.error('email or password wrong', {
-      position: 'top-right',
-    });
   }
 
   return (
@@ -47,82 +49,36 @@ export default function Login() {
         <title>Login Page</title>
       </Head>
 
-      <div className="flex h-screen">
-        <div className="h-full w-2/4 relative">
-          <Image
-            src="/images/bendungan.jpg"
-            alt="image login"
-            className="h-full object-cover"
-            fill={true}
-            priority={true}
+      <div className="flex h-screen justify-center items-center bg-[#fafafa]">
+        <div className="w-[400px] h-[350px] bg-white rounded-xl border-2 p-8 text-center flex flex-col gap-5">
+          <h1 className="font-bold text-xl">
+            Selamat Datang Di Aplikasi Telemetri (Demo)
+          </h1>
+
+          <Input
+            label="Email"
+            icon={<HiOutlineMail />}
+            type="email"
+            onChange={(e) => setEmail(e.target.value)}
           />
+
+          <Input
+            label="Password"
+            icon={<HiKey />}
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <Button
+            className="bg-custom-gray-one capitalize flex justify-center items-center tracking-wider font-semibold"
+            onClick={handleLogin}
+            disabled={disabled}
+            size="md"
+          >
+            {!loading ? 'Login' : <Spinner className="h-4 w-4" />}
+          </Button>
         </div>
-
-        <div className="h-full w-2/4 flex justify-center items-center">
-          <div className="flex flex-col gap-2 w-[450px] text-center p-12">
-            <h1 className="font-bold text-3xl mb-5">
-              Selamat Datang di Aplikasi Telemetri
-            </h1>
-
-            <input
-              type="text"
-              placeholder="Email"
-              className="flex h-[52px] w-full rounded-md bg-gray-200 px-6 text-base text-gray-900 outline-none placeholder:text-[14px] placeholder:font-semibold placeholder:text-gray-600 focus:border focus:border-green-400 focus:ring-4 focus:ring-green-400/20"
-              name="email"
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (e.target.value == '' || password == '') {
-                  setDisabled(true);
-                } else {
-                  setDisabled(false);
-                }
-              }}
-              autoComplete="off"
-            />
-
-            <div className="relative flex w-full items-center">
-              <input
-                type={type}
-                placeholder="Password"
-                className="flex h-[52px] w-full rounded-md bg-gray-200 px-6 text-base text-gray-900 outline-none placeholder:text-[14px] placeholder:font-semibold placeholder:text-gray-600 focus:border focus:border-green-400 focus:ring-4 focus:ring-green-400/20"
-                name="password"
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (e.target.value == '' || email == '') {
-                    setDisabled(true);
-                  } else {
-                    setDisabled(false);
-                  }
-                }}
-                autoComplete="off"
-              />
-
-              <div
-                className="absolute right-6 cursor-pointer rounded-lg p-1 text-[1.3rem] text-gray-600 hover:bg-gray-300 dark:hover:bg-gray-800"
-                onClick={() => {
-                  if (type == 'password') {
-                    setType('text');
-                  } else {
-                    setType('password');
-                  }
-                }}
-              >
-                {type == 'password' ? <HiOutlineEye /> : <HiOutlineEyeOff />}
-              </div>
-            </div>
-
-            <Button
-              className="bg-green-400 flex justify-center"
-              size="lg"
-              onClick={handleLogin}
-              disabled={disabled}
-            >
-              {loading ? <Spinner /> : 'Login'}
-            </Button>
-
-            <p className="mt-4 text-sm">Copyright {new Date().getFullYear()}</p>
-          </div>
-        </div>
+        <p className="absolute bottom-4">PT. RODA HARAPAN SEMESTA</p>
       </div>
     </>
   );
