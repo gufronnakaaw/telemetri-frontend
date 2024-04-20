@@ -52,7 +52,7 @@ export default function Login() {
       <div className="flex h-screen justify-center items-center bg-[#fafafa]">
         <div className="w-[400px] h-[350px] bg-white rounded-xl border-2 p-8 text-center flex flex-col gap-5">
           <h1 className="font-bold text-xl">
-            Selamat Datang Di Aplikasi Telemetri (Demo)
+            Selamat Datang Di Aplikasi Telemetri
           </h1>
 
           <Input

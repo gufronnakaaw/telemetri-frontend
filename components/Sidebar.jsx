@@ -66,7 +66,7 @@ export default function Sidebar() {
       <Card className="h-full w-full max-w-[20rem] p-4 border-r border-gray-200 rounded-none">
         <div className="mb-2 p-4 text-center">
           <Typography variant="h5" color="blue-gray" className="font-inter">
-            Telemetri Dashboard (Demo)
+            Telemetri Dashboard
           </Typography>
         </div>
         <List>
