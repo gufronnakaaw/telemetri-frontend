@@ -5,7 +5,7 @@ export default async function middleware(req) {
   if (
     req.nextUrl.pathname == '/' ||
     req.nextUrl.pathname.startsWith('/stations') ||
-    req.nextUrl.pathname == '/settings'
+    req.nextUrl.pathname.startsWith('/settings')
   ) {
     const token = await getToken({ req, secret: 'telemetrikey' });
 
