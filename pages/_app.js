@@ -5,7 +5,7 @@ import { SessionProvider, getSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import NextNProgress from 'nextjs-progressbar';
 import { useEffect } from 'react';
-import Toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 export default function App({
   Component,
@@ -19,10 +19,6 @@ export default function App({
         const session = await getSession();
 
         if (!session) {
-          Toast.error('session expired', {
-            position: 'top-right',
-            duration: 1000,
-          });
           signOut();
         }
       }

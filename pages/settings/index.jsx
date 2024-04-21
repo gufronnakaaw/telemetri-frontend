@@ -3,7 +3,6 @@ import ModalCreate from '@/components/ModalCreate';
 import Loading from '@/components/Spinner';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import {
-  Button,
   Card,
   CardBody,
   CardHeader,
@@ -17,12 +16,11 @@ import axios from 'axios';
 import { getServerSession } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { HiEllipsisVertical } from 'react-icons/hi2';
 import useSWR from 'swr';
 
-export default function LocationDetail({ stations, token, role }) {
+export default function LocationDetail({ stations, token }) {
   const { data, isLoading, mutate } = useSWR(
     '/api/location/maps',
     async (url) => {
@@ -44,7 +42,6 @@ export default function LocationDetail({ stations, token, role }) {
     }
   );
   const [openCreate, setOpenCreate] = useState(false);
-  const router = useRouter();
   const session = useSession();
   const TABLE_HEAD = ['#', 'Name', 'Title', 'Status', 'Action'];
 
@@ -80,36 +77,17 @@ export default function LocationDetail({ stations, token, role }) {
               </Typography>
             </div>
             <div className="flex shrink-0 flex-col sm:flex-row">
-              <Button
+              <button
+                className="capitalize flex justify-center items-center border border-gray-400 text-custom-gray-two gap-2 px-4 py-2 rounded-md font-inter text-sm font-bold bg-custom-gray-one"
                 onClick={() => setOpenCreate(!openCreate)}
-                size="md"
-                className="font-inter capitalize font-semibold"
               >
-                Create Location
-              </Button>
+                Add New
+              </button>
             </div>
           </div>
         </CardHeader>
         <CardBody className="px-2">
-          <div className="flex justify-end gap-2">
-            <Menu>
-              <MenuHandler>
-                <Button className="bg-custom-gray-one capitalize" size="sm">
-                  Filter
-                </Button>
-              </MenuHandler>
-              <MenuList>
-                <MenuItem>By Date</MenuItem>
-                <MenuItem>By Time</MenuItem>
-              </MenuList>
-            </Menu>
-            <Link href="/telemetri.xlsx" download>
-              <Button className="bg-custom-gray-one capitalize" size="sm">
-                Export
-              </Button>
-            </Link>
-          </div>
-          <div className="rounded-lg overflow-hidden border border-gray-300 mt-5">
+          <div className="rounded-lg overflow-hidden border border-gray-300">
             <table className="w-full min-w-max table-auto text-center">
               <thead className="rounded-2xl">
                 <tr>
@@ -170,7 +148,7 @@ export default function LocationDetail({ stations, token, role }) {
                       <td className={classes}>
                         <Menu>
                           <MenuHandler>
-                            <button className="cursor-pointer hover:bg-gray-200 transition rounded-sm">
+                            <button className="cursor-pointer hover:bg-gray-300 transition rounded-md">
                               <HiEllipsisVertical className="w-5 h-5" />
                             </button>
                           </MenuHandler>
