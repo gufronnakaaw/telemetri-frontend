@@ -95,7 +95,7 @@ export default function StationEdit({ station, token }) {
 
     try {
       await axios.patch(
-        'http://103.112.163.137:3001/api/location',
+        'http://iotindonesia.online:1414/api/location',
         {
           ...value,
           status,
@@ -233,7 +233,7 @@ export async function getServerSideProps({ req, res, params }) {
 
   try {
     const { data } = await axios.get(
-      'http://103.112.163.137:3001/api/location/maps',
+      'http://iotindonesia.online:1414/api/location/maps',
       {
         headers: {
           token: session.user.token,

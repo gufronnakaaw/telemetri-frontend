@@ -26,7 +26,7 @@ export default function Maps() {
     async function getDataMaps() {
       try {
         const { data } = await axios.get(
-          'http://103.112.163.137:3001/api/location/maps',
+          'http://iotindonesia.online:1414/api/location/maps',
           {
             headers: {
               token: session.data.user.token,

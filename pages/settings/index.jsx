@@ -25,11 +25,14 @@ export default function LocationDetail({ stations, token }) {
     '/api/location/maps',
     async (url) => {
       try {
-        const { data } = await axios.get(`http://103.112.163.137:3001${url}`, {
-          headers: {
-            token,
-          },
-        });
+        const { data } = await axios.get(
+          `http://iotindonesia.online:1414${url}`,
+          {
+            headers: {
+              token,
+            },
+          }
+        );
 
         return data;
       } catch (error) {
@@ -52,7 +55,7 @@ export default function LocationDetail({ stations, token }) {
   async function handleDelete(name) {
     if (confirm('are you sure?')) {
       try {
-        await axios.delete('http://103.112.163.137:3001/api/location', {
+        await axios.delete('http://iotindonesia.online:1414/api/location', {
           headers: {
             token,
           },
@@ -191,7 +194,7 @@ export async function getServerSideProps({ req, res }) {
 
   try {
     const { data } = await axios.get(
-      'http://103.112.163.137:3001/api/location/maps',
+      'http://iotindonesia.online:1414/api/location/maps',
       {
         headers: {
           token: session.user.token,

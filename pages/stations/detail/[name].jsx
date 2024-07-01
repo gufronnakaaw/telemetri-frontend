@@ -31,11 +31,14 @@ export default function DetailStations({ details, token, name }) {
     filterUrl,
     async (url) => {
       try {
-        const { data } = await axios.get(`http://103.112.163.137:3001${url}`, {
-          headers: {
-            token,
-          },
-        });
+        const { data } = await axios.get(
+          `http://iotindonesia.online:1414${url}`,
+          {
+            headers: {
+              token,
+            },
+          }
+        );
 
         return data;
       } catch (error) {
@@ -63,7 +66,7 @@ export default function DetailStations({ details, token, name }) {
   async function handleExport() {
     try {
       const { data: response } = await axios.get(
-        `http://103.112.163.137:3001/api/location/detail/${name}?period=12h`,
+        `http://iotindonesia.online:1414/api/location/detail/${name}?period=12h`,
         {
           headers: {
             token,
@@ -231,7 +234,7 @@ export async function getServerSideProps({ req, res, params }) {
 
   try {
     const { data } = await axios.get(
-      `http://103.112.163.137:3001/api/location/detail/${params.name}`,
+      `http://iotindonesia.online:1414/api/location/detail/${params.name}`,
       {
         headers: {
           token: session.user.token,

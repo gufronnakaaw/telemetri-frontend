@@ -89,7 +89,7 @@ export default function ModalCreate({ open, setOpen, mutate }) {
 
     try {
       await axios.post(
-        'http://103.112.163.137:3001/api/location',
+        'http://iotindonesia.online:1414/api/location',
         {
           ...value,
           status,
